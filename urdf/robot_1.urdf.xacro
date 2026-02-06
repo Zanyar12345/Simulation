@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+
+<robot name="robot_1" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:property name="radius" value="0.17" />
+    <xacro:property name="distance_between_two_wheels" value="1.13" />
+    <xacro:property name="width" value="0.84" />
+    <xacro:property name="length" value="${2*radius + distance_between_two_wheels}" />
+    <xacro:property name="height" value="0.3" />
+    <xacro:property name="wheel_width" value="0.07" />
+    <xacro:property name="mass" value="5" />
+    <xacro:property name="wheel_mass" value="1" />
+    
+
+
+    <material name="blue">
+        <color rgba="0 0 1 1"/>
+    </material>
+    <material name="green">
+        <color rgba="0 1 0 1"/>
+    </material>
+
+
+<xacro:macro name="eylemsizlik_gövde" params="m l w h xyz rpy">
+  <inertial>
+    <origin xyz="${xyz}" rpy="${rpy}"/>
+    <mass value="${m}"/>
+    <inertia
+      ixx="${(1/12)*m*(l*l + h*h)}"
+      iyy="${(1/12)*m*(l*l + w*w)}"
+      izz="${(1/12)*m*(h*h + w*w)}"
+      ixy="0"
+      ixz="0"
+      iyz="0"/>
+  </inertial>
+</xacro:macro>
+
+
+<xacro:macro name="eylemsizlik_silindir" params="m r h xyz rpy">
+  <inertial>
+    <origin xyz="${xyz}" rpy="${rpy}"/>
+    <mass value="${m}"/>
+    <inertia
+      ixx="${(1/12)*m*(3*r*r+h*h)}"
+      iyy="${(1/12)*m*(3*r*r+h*h)}"
+      izz="${(1/2)*m*(r*r)}"
+      ixy="0"
+      ixz="0"
+      iyz="0"/>
+  </inertial>
+</xacro:macro>
+
+<xacro:macro name="renk" params="params">
+    <gazebo reference="${params}">
+        <material>Gazebo/Green</material>
+    </gazebo>
+</xacro:macro>
+
+<gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+</gazebo>
+
+<xacro:renk params="wheel_front_right"/>
+<xacro:renk params="wheel_rear_right"/>
+<xacro:renk params="wheel_front_left"/>
+<xacro:renk params="wheel_rear_left"/>
+
+
+
+
+
+
+    <link name="base_link">
+
+        <visual>
+
+            <geometry>
+
+                <box size="${length} ${width} ${height}" />
+                <!--mesh filename="package://" scale="0.1 0.1 0.1"/-->
+            </geometry>
+
+            <origin xyz="0 0 ${height}" rpy="0 0 0" />
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+
+                <box size="${length} ${width} ${height}" />
+                <!--mesh filename="package://" scale="0.1 0.1 0.1"/-->
+            </geometry>
+            <origin xyz="0 0 ${height}" rpy="0 0 0" />
+        </collision>
+        <xacro:eylemsizlik_gövde m="${mass}" l="${length}" w="${width}" h="${height}" xyz="0 0 ${height}" rpy="0 0 0" />
+
+    </link>
+
+
+
+    <link name="wheel_rear_left">
+        <visual>
+            <geometry>
+
+                <cylinder radius="${radius}" length="${wheel_width}" />
+
+            </geometry>
+            <material name="green"/>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${radius}" length="${wheel_width}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+        
+        <xacro:eylemsizlik_silindir m="${wheel_mass}" r="${radius}" h="${wheel_width}" xyz="0 0 0" rpy="0 0 0" />
+    </link>
+
+
+    <link name="wheel_rear_right">
+        <visual>
+            <geometry>
+
+                <cylinder radius="${radius}" length="${wheel_width}" />
+
+            </geometry>
+            <material name="green"/>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${radius}" length="${wheel_width}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+        
+        <xacro:eylemsizlik_silindir m="${wheel_mass}" r="${radius}" h="${wheel_width}" xyz="0 0 0" rpy="0 0 0" />
+    </link>
+
+
+
+
+    <link name="wheel_front_left">
+        <visual>
+            <geometry>
+
+                <cylinder radius="${radius}" length="${wheel_width}" />
+
+            </geometry>
+            <material name="green"/>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${radius}" length="${wheel_width}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+        
+        <xacro:eylemsizlik_silindir m="${wheel_mass}" r="${radius}" h="${wheel_width}" xyz="0 0 0" rpy="0 0 0" />
+    </link>
+
+
+
+    <link name="wheel_front_right">
+        <visual>
+            <geometry>
+
+                <cylinder radius="${radius}" length="${wheel_width}" />
+
+            </geometry>
+            <material name="green"/>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${radius}" length="${wheel_width}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.57 0 0"/>
+        </collision>
+        
+        <xacro:eylemsizlik_silindir m="${wheel_mass}" r="${radius}" h="${wheel_width}" xyz="0 0 0" rpy="0 0 0" />
+    </link>
+
+<xacro:macro name="wheel_link" params="param1 param2"> 
+<link name="${param1}_${param2}_wheel_link">
+  <visual>
+    <geometry>
+      <box size="0.00000001 0.00000001 0.00000001"/>
+    </geometry>
+  </visual>
+
+  <collision>
+    <geometry>
+      <box size="0.00000001 0.00000001 0.00000001"/>
+    </geometry>
+  </collision>
+
+  <inertial>
+    <mass value="0.1"/>
+    <inertia
+      ixx="0.0001" iyy="0.0001" izz="0.0001"
+      ixy="0" ixz="0" iyz="0"/>
+  </inertial>
+</link>
+</xacro:macro>
+<xacro:wheel_link param1="front" param2="right"/>
+<xacro:wheel_link param1="rear" param2="right"/>
+<xacro:wheel_link param1="front" param2="left"/>
+<xacro:wheel_link param1="rear" param2="left"/>
+
+
+
+    <joint name="name1" type="continuous">
+        <parent link="rear_left_wheel_link" />
+        <child link="wheel_rear_left" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0"   />
+    </joint> 
+
+<joint name="rear_left_steer_joint" type="revolute">
+  <parent link="base_link"/>
+  <child link="rear_left_wheel_link"/>
+  <origin xyz="${-length/2 + radius} ${-width/2} ${height/2}" rpy="0 0 0"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="-1.57" upper="1.57" effort="50" velocity="50"/>
+</joint>
+
+    <joint name="name2" type="continuous">
+        <parent link="rear_right_wheel_link" />
+        <child link="wheel_rear_right" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0"   />
+    </joint> 
+
+<joint name="rear_right_steer_joint" type="revolute">
+  <parent link="base_link"/>
+  <child link="rear_right_wheel_link"/>
+  <origin xyz="${-length/2 + radius} ${width/2} ${height/2}" rpy="0 0 0"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="-1.57" upper="1.57" effort="50" velocity="50"/>
+</joint>
+
+    <joint name="name3" type="continuous">
+        <parent link="front_left_wheel_link" />
+        <child link="wheel_front_left" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0"   />
+    </joint> 
+
+<joint name="front_left_steer_joint" type="revolute">
+  <parent link="base_link"/>
+  <child link="front_left_wheel_link"/>
+  <origin xyz="${length/2 - radius} ${width/2} ${height/2}" rpy="0 0 0"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="-1.57" upper="1.57" effort="50" velocity="50"/>
+</joint>
+
+    <joint name="name4" type="continuous">
+        <parent link="front_right_wheel_link" />
+        <child link="wheel_front_right" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0"   />
+    </joint> 
+
+<joint name="front_right_steer_joint" type="revolute">
+  <parent link="base_link"/>
+  <child link="front_right_wheel_link"/>
+  <origin xyz="${length/2 - radius} ${-width/2} ${height/2}" rpy="0 0 0"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="-1.57" upper="1.57" effort="50" velocity="50"/>
+</joint>
+
+
+<ros2_control name="GazeboSystem" type="system">
+  <hardware>
+    <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+  </hardware>
+
+  <joint name="name1"><command_interface name="velocity"/>
+    <state_interface name="velocity"/></joint>
+  <joint name="name2"><command_interface name="velocity"/>
+    <state_interface name="velocity"/></joint>
+  <joint name="name3"><command_interface name="velocity"/>
+    <state_interface name="velocity"/></joint>
+  <joint name="name4"><command_interface name="velocity"/>
+    <state_interface name="velocity"/></joint>
+
+  <joint name="front_left_steer_joint"><command_interface name="position"/>
+    <state_interface name="position"/></joint>
+  <joint name="front_right_steer_joint"><command_interface name="position"/>
+    <state_interface name="position"/></joint>
+  <joint name="rear_left_steer_joint"><command_interface name="position"/>
+    <state_interface name="position"/></joint>
+  <joint name="rear_right_steer_joint"><command_interface name="position"/>
+    <state_interface name="position"/></joint>
+</ros2_control>
+
+<gazebo reference="wheel_front_left">
+  <mu1>10.0</mu1>
+  <mu2>10.0</mu2>
+</gazebo>
+
+<gazebo reference="wheel_front_right">
+  <mu1>10.0</mu1>
+  <mu2>10.0</mu2>
+</gazebo>
+
+<gazebo reference="wheel_rear_left">
+  <mu1>10.0</mu1>
+  <mu2>10.0</mu2>
+</gazebo>
+
+<gazebo reference="wheel_rear_right">
+  <mu1>10.0</mu1>
+  <mu2>10.0</mu2>
+</gazebo>
+
+<gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find robot_1_description)/config/control.yaml</parameters> 
+    </plugin>
+  </gazebo>
+
+</robot>
+
+
