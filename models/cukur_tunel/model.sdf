@@ -1,0 +1,91 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='CukurTunel'>
+    <static>true</static>
+
+    <!-- INEN RAMPA (GIRIS) -->
+    <link name='Ramp_Down'>
+      <pose>2.0 0 -0.5 0 0.24497 0</pose>
+      <collision name='Ramp_Down_Col'>
+        <geometry><box><size>4.123 6.0 0.1</size></box></geometry>
+      </collision>
+      <visual name='Ramp_Down_Vis'>
+        <geometry><box><size>4.123 6.0 0.1</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Grey</name></script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ÇUKUR DÜZLÜĞÜ (DİP) -->
+    <link name='Pit_Flat'>
+      <pose>6.0 0 -1.0 0 0 0</pose>
+      <collision name='Pit_Flat_Col'>
+        <geometry><box><size>4.0 6.0 0.1</size></box></geometry>
+      </collision>
+      <visual name='Pit_Flat_Vis'>
+        <geometry><box><size>4.0 6.0 0.1</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Grey</name></script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ÇIKAN RAMPA (ÇIKIŞ) -->
+    <link name='Ramp_Up'>
+      <pose>10.0 0 -0.5 0 -0.24497 0</pose>
+      <collision name='Ramp_Up_Col'>
+        <geometry><box><size>4.123 6.0 0.1</size></box></geometry>
+      </collision>
+      <visual name='Ramp_Up_Vis'>
+        <geometry><box><size>4.123 6.0 0.1</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Grey</name></script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- SOL DUVAR -->
+    <link name='Wall_Left'>
+      <pose>6.0 3.1 1.0 0 0 0</pose>
+      <collision name='Wall_Left_Col'>
+        <geometry><box><size>12.0 0.2 4.0</size></box></geometry>
+      </collision>
+      <visual name='Wall_Left_Vis'>
+        <geometry><box><size>12.0 0.2 4.0</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Bricks</name></script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- SAĞ DUVAR -->
+    <link name='Wall_Right'>
+      <pose>6.0 -3.1 1.0 0 0 0</pose>
+      <collision name='Wall_Right_Col'>
+        <geometry><box><size>12.0 0.2 4.0</size></box></geometry>
+      </collision>
+      <visual name='Wall_Right_Vis'>
+        <geometry><box><size>12.0 0.2 4.0</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Bricks</name></script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- TAVAN (ÇATI) -->
+    <link name='Ceiling'>
+      <pose>6.0 0 3.0 0 0 0</pose>
+      <collision name='Ceiling_Col'>
+        <geometry><box><size>12.0 6.4 0.1</size></box></geometry>
+      </collision>
+      <visual name='Ceiling_Vis'>
+        <geometry><box><size>12.0 6.4 0.1</size></box></geometry>
+        <material>
+          <script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/CeilingTiled</name></script>
+        </material>
+      </visual>
+    </link>
+
+  </model>
+</sdf>

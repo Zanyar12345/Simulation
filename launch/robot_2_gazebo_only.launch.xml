@@ -1,0 +1,33 @@
+<launch>
+
+  <let name="pkg_simulation" value="$(find-pkg-share robot_2_description)"/> 
+  
+  <let name="urdf_path" value="$(var pkg_simulation)/urdf/robot_2.urdf.xacro"/>
+  <let name="world_path" value="$(var pkg_simulation)/worlds/moon.world"/>
+
+<set_env name="GAZEBO_MODEL_PATH"
+         value="/home/zanyar/ros2_ws/src/Rover_simulation/models"/>
+
+<node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
+  <param name="use_sim_time" value="true"/>
+  <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
+</node>
+
+  <executable
+    cmd="gazebo --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so $(var world_path)"
+    output="screen"/>
+
+  <node pkg="gazebo_ros" exec="spawn_entity.py"
+        args="-topic robot_description -entity robot_2 -x 0 -y 0 -z 2"
+        output="screen"/>
+
+  <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen"/>
+  <node pkg="controller_manager" exec="spawner" args="wheel_velocity_controller" output="screen"/>
+  <node pkg="controller_manager" exec="spawner" args="steer_position_controller" output="screen"/>
+  <node pkg="controller_manager" exec="spawner" args="suspension_effort_controller" output="screen"/>
+
+  <node pkg="robot_2_description" exec="input_processor1.py"/>
+  <node pkg="robot_2_description" exec="publisher.py"/>
+  <node pkg="robot_2_description" exec="odom_tf.py"/>
+
+</launch>

@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.8)
+project(robot_2_description)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(xacro REQUIRED)
+
+install(
+  PROGRAMS
+    robot_2_description/highest_point.py
+    robot_2_description/publisher.py
+    robot_2_description/input_processor.py
+    robot_2_description/input_processor1.py
+    robot_2_description/mode.py
+    robot_2_description/odom_tf.py
+    robot_2_description/measure_path_length.py
+    robot_2_description/measure_walls_from_map.py
+    robot_2_description/measure_ceiling.py
+    robot_2_description/wasd.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY 
+    urdf config launch worlds models
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+ament_package()

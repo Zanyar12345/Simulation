@@ -1,0 +1,685 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hubba">
+
+    <!-- RVIZ ICIN RENK MATERYALLERI -->
+    <material name="white"><color rgba="0.95 0.95 0.95 1.0"/></material>
+    <material name="grey"><color rgba="0.60 0.62 0.65 1.0"/></material>
+    <material name="yellow"><color rgba="0.95 0.82 0.10 1.0"/></material>
+    <material name="vine_red"><color rgba="0.85 0.15 0.15 1.0"/></material>
+    <material name="indigo"><color rgba="0.45 0.15 0.65 1.0"/></material>
+    <material name="black"><color rgba="0.08 0.08 0.08 1.0"/></material>
+    <material name="cyan_blue"><color rgba="0.20 0.75 0.88 1.0"/></material>
+
+    <!-- GAZEBO VE RVIZ ICIN STABIL RENKLI PARCA MAKROSU -->
+    <!-- Fixed joint'ler Gazebo tarafindan ana linke birlestirilir (preserveFixedJoint kullanilmaz) -->
+    <xacro:macro name="colored_part" params="name parent xyz rpy geom_type size:='0 0 0' radius:=0 length:=0 rviz_mat gz_mat">
+        <link name="${name}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <xacro:if value="${geom_type == 'box'}">
+                        <box size="${size}"/>
+                    </xacro:if>
+                    <xacro:if value="${geom_type == 'cylinder'}">
+                        <cylinder radius="${radius}" length="${length}"/>
+                    </xacro:if>
+                </geometry>
+                <material name="${rviz_mat}"/>
+            </visual>
+            <inertial>
+                <mass value="0.05"/>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+            </inertial>
+        </link>
+        <joint name="${parent}_to_${name}" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${name}"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+        </joint>
+        <gazebo reference="${name}">
+            <material>${gz_mat}</material>
+            <selfCollide>false</selfCollide>
+        </gazebo>
+    </xacro:macro>
+
+    <link name="base_footprint"/>
+    
+    <joint name="base_footprint_to_base_link" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.0" rpy="0 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- ANA GOVDE (Alt Sasi Platformu) -->
+    <link name="base_link">
+        <visual>
+            <geometry><box size="0.56 0.96 0.03" /></geometry>
+            <origin xyz="0 0 0.47" rpy="0 0 0" />
+            <material name="white" />
+        </visual>
+        <collision>
+            <geometry><box size="0.56 0.90 0.24" /></geometry>
+            <origin xyz="0 -0.05 0.60" rpy="0 0 0" />
+        </collision>
+        <inertial>
+            <mass value="50.0"/>
+            <origin xyz="0 0 0.55" rpy="0 0 0"/> 
+            <inertia ixx="4.91" ixy="0" ixz="0" iyy="2.33" iyz="0" izz="6.40"/>
+        </inertial>
+    </link>
+    <gazebo reference="base_link">
+        <material>Gazebo/White</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- ================= SASI, GRI DIS HATLAR VE EGIMLI DIKMELER ================= -->
+    <xacro:colored_part name="rear_electronics_box" parent="base_link" xyz="0 -0.15 0.61" rpy="0 0 0" geom_type="box" size="0.52 0.62 0.25" rviz_mat="white" gz_mat="Gazebo/White"/>
+    
+    <!-- Govde Dis Hat Profilleri -->
+    <xacro:colored_part name="frame_top_edge_r" parent="base_link" xyz="0.26 -0.15 0.735" rpy="0 0 0" geom_type="box" size="0.03 0.64 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_top_edge_l" parent="base_link" xyz="-0.26 -0.15 0.735" rpy="0 0 0" geom_type="box" size="0.03 0.64 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_top_front" parent="base_link" xyz="0 0.16 0.735" rpy="0 0 0" geom_type="box" size="0.55 0.03 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_top_rear" parent="base_link" xyz="0 -0.46 0.735" rpy="0 0 0" geom_type="box" size="0.55 0.03 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_pillar_fr" parent="base_link" xyz="0.26 0.16 0.61" rpy="0 0 0" geom_type="box" size="0.03 0.03 0.25" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_pillar_fl" parent="base_link" xyz="-0.26 0.16 0.61" rpy="0 0 0" geom_type="box" size="0.03 0.03 0.25" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_pillar_rr" parent="base_link" xyz="0.26 -0.46 0.61" rpy="0 0 0" geom_type="box" size="0.03 0.03 0.25" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="frame_pillar_rl" parent="base_link" xyz="-0.26 -0.46 0.61" rpy="0 0 0" geom_type="box" size="0.03 0.03 0.25" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+
+    <!-- Alt Dis Hatlar -->
+    <xacro:colored_part name="bottom_side_rail_r" parent="base_link" xyz="0.26 0.0 0.49" rpy="0 0 0" geom_type="box" size="0.03 0.92 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="bottom_side_rail_l" parent="base_link" xyz="-0.26 0.0 0.49" rpy="0 0 0" geom_type="box" size="0.03 0.92 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="bottom_front_rail" parent="base_link" xyz="0 0.46 0.49" rpy="0 0 0" geom_type="box" size="0.55 0.03 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="bottom_rear_rail" parent="base_link" xyz="0 -0.46 0.49" rpy="0 0 0" geom_type="box" size="0.55 0.03 0.03" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+
+    <!-- Tam Birlesen Egimli Dikmeler -->
+    <xacro:colored_part name="front_slanted_strut_r" parent="base_link" xyz="0.26 0.295 0.615" rpy="0.72 0 0" geom_type="box" size="0.03 0.03 0.36" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="front_slanted_strut_l" parent="base_link" xyz="-0.26 0.295 0.615" rpy="0.72 0 0" geom_type="box" size="0.03 0.03 0.36" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+
+    <!-- Sari On Kosebentler -->
+    <xacro:colored_part name="front_yellow_bracket_r" parent="base_link" xyz="0.26 0.43 0.50" rpy="0 0 0" geom_type="box" size="0.05 0.07 0.05" rviz_mat="yellow" gz_mat="Gazebo/Yellow"/>
+    <xacro:colored_part name="front_yellow_bracket_l" parent="base_link" xyz="-0.26 0.43 0.50" rpy="0 0 0" geom_type="box" size="0.05 0.07 0.05" rviz_mat="yellow" gz_mat="Gazebo/Yellow"/>
+    <xacro:colored_part name="under_cyan_box" parent="base_link" xyz="0 0.10 0.43" rpy="0 0 0" geom_type="box" size="0.24 0.24 0.04" rviz_mat="cyan_blue" gz_mat="Gazebo/Turquoise"/>
+
+
+    <!-- ================= 5 EKSENLI HAREKETLI ROBOTIK KOL ================= -->
+    <!-- EKLEM 1 - Taban Donusu (Waist Yaw - Z Ekseni) -->
+    <joint name="arm_base_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="arm_base_link"/>
+        <origin xyz="0.04 0.32 0.485" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-3.14" upper="3.14" effort="100.0" velocity="1.5"/>
+        <dynamics damping="5.0" friction="1.0"/>
+    </joint>
+    <gazebo reference="arm_base_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_base_link">
+        <visual>
+            <geometry><cylinder radius="0.085" length="0.035"/></geometry>
+            <origin xyz="0 0 0.0175" rpy="0 0 0"/>
+            <material name="vine_red"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.09 0.09 0.07"/></geometry>
+            <origin xyz="0 0 0.07" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <inertial>
+            <mass value="1.5"/>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_base_link">
+        <material>Gazebo/Red</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 2 - Omuz Hareketi (Shoulder Pitch - X Ekseni) -->
+    <joint name="arm_shoulder_joint" type="revolute">
+        <parent link="arm_base_link"/>
+        <child link="arm_shoulder_link"/>
+        <origin xyz="0 0 0.105" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-1.2" upper="1.57" effort="150.0" velocity="1.0"/>
+        <dynamics damping="8.0" friction="2.0"/>
+    </joint>
+    <gazebo reference="arm_shoulder_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_shoulder_link">
+        <visual>
+            <geometry><box size="0.06 0.07 0.44"/></geometry>
+            <origin xyz="0 0 0.22" rpy="0 0 0"/>
+            <material name="white"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.09 0.10 0.30"/></geometry>
+            <origin xyz="0 0 0.22" rpy="0 0 0"/>
+            <material name="vine_red"/>
+        </visual>
+        <visual>
+            <geometry><cylinder radius="0.02" length="0.25"/></geometry>
+            <origin xyz="0 0.05 0.15" rpy="0.1 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <inertial>
+            <mass value="2.0"/>
+            <origin xyz="0 0 0.22" rpy="0 0 0"/>
+            <inertia ixx="0.04" ixy="0" ixz="0" iyy="0.04" iyz="0" izz="0.01"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_shoulder_link">
+        <material>Gazebo/Red</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 3 - Dirsek Hareketi (Elbow Pitch - X Ekseni) -->
+    <joint name="arm_elbow_joint" type="revolute">
+        <parent link="arm_shoulder_link"/>
+        <child link="arm_elbow_link"/>
+        <origin xyz="0 0 0.44" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-2.2" upper="2.2" effort="100.0" velocity="1.2"/>
+        <dynamics damping="6.0" friction="1.5"/>
+    </joint>
+    <gazebo reference="arm_elbow_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_elbow_link">
+        <visual>
+            <geometry><cylinder radius="0.09" length="0.16"/></geometry>
+            <origin xyz="-0.10 0 0" rpy="0 ${pi/2} 0"/>
+            <material name="vine_red"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.09 0.11 0.12"/></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="indigo"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.04 0.04 0.28"/></geometry>
+            <origin xyz="0 0 0.14" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <inertial>
+            <mass value="1.5"/>
+            <origin xyz="0 0 0.10" rpy="0 0 0"/>
+            <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_elbow_link">
+        <material>Gazebo/Purple</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 4 - Bilek Egimi (Wrist Pitch - X Ekseni) -->
+    <joint name="arm_wrist_pitch_joint" type="revolute">
+        <parent link="arm_elbow_link"/>
+        <child link="arm_wrist_link"/>
+        <origin xyz="0 0 0.28" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-1.8" upper="1.8" effort="50.0" velocity="1.5"/>
+        <dynamics damping="3.0" friction="0.5"/>
+    </joint>
+    <gazebo reference="arm_wrist_pitch_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_wrist_link">
+        <visual>
+            <geometry><box size="0.06 0.06 0.05"/></geometry>
+            <origin xyz="0 0 0.025" rpy="0 0 0"/>
+            <material name="yellow"/>
+        </visual>
+        <inertial>
+            <mass value="0.5"/>
+            <origin xyz="0 0 0.025" rpy="0 0 0"/>
+            <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_wrist_link">
+        <material>Gazebo/Yellow</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 5 - Bilek Donusu (Wrist Roll - Z Ekseni) -->
+    <joint name="arm_wrist_roll_joint" type="revolute">
+        <parent link="arm_wrist_link"/>
+        <child link="arm_end_effector_link"/>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-3.14" upper="3.14" effort="30.0" velocity="2.0"/>
+        <dynamics damping="2.0" friction="0.5"/>
+    </joint>
+    <gazebo reference="arm_wrist_roll_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_end_effector_link">
+        <visual>
+            <geometry><box size="0.08 0.08 0.06"/></geometry>
+            <origin xyz="0 0 0.03" rpy="0 0 0"/>
+            <material name="black"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="0.03 0 0.08" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <visual>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="-0.03 0 0.08" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <inertial>
+            <mass value="0.5"/>
+            <origin xyz="0 0 0.04" rpy="0 0 0"/>
+            <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_end_effector_link">
+        <material>Gazebo/Black</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+
+    <!-- ================= ARKA SONDAJ / BILIM KULESI ================= -->
+    <xacro:colored_part name="drill_plate_purple" parent="base_link" xyz="0.20 -0.35 0.76" rpy="0 0 0" geom_type="box" size="0.14 0.14 0.02" rviz_mat="indigo" gz_mat="Gazebo/Purple"/>
+    <xacro:colored_part name="drill_rod_1" parent="base_link" xyz="0.16 -0.35 0.98" rpy="0 0 0" geom_type="cylinder" radius="0.008" length="0.44" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="drill_rod_2" parent="base_link" xyz="0.24 -0.35 0.98" rpy="0 0 0" geom_type="cylinder" radius="0.008" length="0.44" rviz_mat="grey" gz_mat="Gazebo/Grey"/>
+    <xacro:colored_part name="drill_top_cyan" parent="base_link" xyz="0.20 -0.35 1.04" rpy="0 0 0" geom_type="cylinder" radius="0.065" length="0.04" rviz_mat="cyan_blue" gz_mat="Gazebo/Turquoise"/>
+    <xacro:colored_part name="drill_motor_white" parent="base_link" xyz="0.20 -0.35 0.90" rpy="0 0 0" geom_type="cylinder" radius="0.026" length="0.22" rviz_mat="white" gz_mat="Gazebo/White"/>
+    <xacro:colored_part name="estop_red" parent="base_link" xyz="0.24 -0.43 0.78" rpy="0 0 0" geom_type="cylinder" radius="0.022" length="0.06" rviz_mat="vine_red" gz_mat="Gazebo/Red"/>
+
+
+    <!-- ================= DIFERANSIYEL BARI (fixed) ================= -->
+    <link name="diff_bar">
+        <visual>
+            <geometry><box size="0.04 0.85 0.04" /></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="grey" />
+        </visual>
+        <inertial>
+            <mass value="0.5"/> 
+            <inertia ixx="0.03" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.03"/>
+        </inertial>
+    </link>
+    <gazebo reference="diff_bar"><material>Gazebo/Grey</material></gazebo>
+
+    <joint name="base_to_diff_bar" type="fixed">
+        <parent link="base_link"/>
+        <child link="diff_bar"/>
+        <origin xyz="0 0 0.40" rpy="0 0 ${pi/2}"/> 
+    </joint>
+
+
+    <!-- ================= TEKERLEK VE DIREKSIYON GRUBU MAKROSU ================= -->
+    <xacro:macro name="wheel_assembly" params="prefix suffix parent_link reflect_x reflect_y">
+        <link name="${prefix}_${suffix}_kutu">
+            <visual>
+                <geometry><box size="0.14 0.16 0.12" /></geometry>
+                <material name="black" />
+            </visual>
+            <inertial>
+                <mass value="0.5"/>
+                <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_kutu"><material>Gazebo/Black</material></gazebo>
+
+        <xacro:colored_part name="${prefix}_${suffix}_kutu_kapak" parent="${prefix}_${suffix}_kutu" xyz="0 ${0.082 * reflect_x} -0.015" rpy="0 0 0" geom_type="box" size="0.10 0.006 0.05" rviz_mat="white" gz_mat="Gazebo/White"/>
+
+        <link name="${prefix}_${suffix}_gearbox">
+            <visual>
+                <geometry><box size="0.08 0.10 0.055" /></geometry>
+                <material name="yellow" />
+            </visual>
+            <inertial>
+                <mass value="0.5"/>
+                <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_gearbox"><material>Gazebo/Yellow</material></gazebo>
+
+        <link name="${prefix}_${suffix}_mil">
+            <visual>
+                <geometry><cylinder radius="0.016" length="0.10"/></geometry>
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
+                <material name="white" />
+            </visual>
+            <inertial>
+                <mass value="0.3"/>
+                <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_mil"><material>Gazebo/White</material></gazebo>
+        <xacro:colored_part name="${prefix}_${suffix}_konnektor" parent="${prefix}_${suffix}_mil" xyz="${-0.06 * reflect_y} 0 0.02" rpy="0 ${pi/2} 0" geom_type="cylinder" radius="0.018" length="0.05" rviz_mat="vine_red" gz_mat="Gazebo/Red"/>
+
+        <link name="${prefix}_${suffix}_steering">
+            <visual>
+                <geometry><box size="0.15 0.06 0.025" /></geometry>
+                <material name="grey" />
+            </visual>
+            <inertial>
+                <mass value="0.3"/>
+                <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_steering"><material>Gazebo/Grey</material></gazebo>
+
+        <link name="${prefix}_${suffix}_drive_prf">
+            <visual>
+                <geometry><box size="0.03 0.07 0.16" /></geometry>
+                <material name="grey" />
+            </visual>
+            <visual>
+                <geometry><cylinder radius="0.05" length="0.09"/></geometry>
+                <origin xyz="${0.045 * reflect_y} 0 -0.08" rpy="0 ${pi/2} 0" />
+                <material name="grey" />
+            </visual>
+            <inertial>
+                <mass value="0.5"/>
+                <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_drive_prf"><material>Gazebo/Grey</material></gazebo>
+
+        <!-- SARI TEKERLEK (zemin temas parametreleri) -->
+        <link name="${prefix}_${suffix}_wheel">
+            <visual>
+                <geometry><cylinder radius="0.105" length="0.12"/></geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+                <material name="yellow" />
+            </visual>
+            <collision>
+                <geometry><cylinder radius="0.105" length="0.12"/></geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+            </collision>
+            <inertial>
+                <mass value="3.0"/> 
+                <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+                <inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.05"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_${suffix}_wheel">
+            <material>Gazebo/Yellow</material>
+            <mu1>0.8</mu1> 
+            <mu2>0.5</mu2> 
+            <fdir1>0 1 0</fdir1>
+            <kp>1000000.0</kp> 
+            <kd>100.0</kd>
+            <minDepth>0.001</minDepth>
+            <maxVel>0.1</maxVel>
+        </gazebo>
+
+        <!-- TEKERLEK ORTASI TAMAMEN KIRMIZI JANT KAPAGI -->
+        <xacro:colored_part name="${prefix}_${suffix}_wheel_red_rim" parent="${prefix}_${suffix}_wheel" xyz="${0.058 * reflect_y} 0 0" rpy="0 ${pi/2} 0" geom_type="cylinder" radius="0.078" length="0.016" rviz_mat="vine_red" gz_mat="Gazebo/Red"/>
+
+        <joint name="${parent_link}_to_${prefix}_${suffix}_kutu" type="fixed">
+            <parent link="${parent_link}"/>
+            <child link="${prefix}_${suffix}_kutu"/>
+            <origin xyz="0 ${0.47 * reflect_x} 0.03" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_${suffix}_kutu_to_gearbox" type="fixed">
+            <parent link="${prefix}_${suffix}_kutu"/>
+            <child link="${prefix}_${suffix}_gearbox"/>
+            <origin xyz="0 0 -0.085" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_${suffix}_gearbox_to_mil" type="fixed">
+            <parent link="${prefix}_${suffix}_gearbox"/>
+            <child link="${prefix}_${suffix}_mil"/>
+            <origin xyz="0 ${-0.01 * reflect_x} -0.06" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_${suffix}_mil_to_steering" type="fixed">
+            <parent link="${prefix}_${suffix}_mil"/>
+            <child link="${prefix}_${suffix}_steering"/>
+            <origin xyz="${-0.035 * reflect_y} 0 -0.06" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_${suffix}_steering_to_drive" type="fixed">
+            <parent link="${prefix}_${suffix}_steering"/>
+            <child link="${prefix}_${suffix}_drive_prf"/>
+            <origin xyz="${-0.045 * reflect_y} 0 -0.09" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_${suffix}_drive_to_wheel" type="continuous">
+            <parent link="${prefix}_${suffix}_drive_prf"/>
+            <child link="${prefix}_${suffix}_wheel"/>
+            <axis xyz="1 0 0"/>
+            <origin xyz="${0.10 * reflect_y} 0 -0.08" rpy="0 0 0"/>
+            <dynamics damping="0.5" friction="0.1"/>
+        </joint>
+    </xacro:macro>
+
+
+    <!-- ================= YAN ROCKER BACAKLARI MAKROSU (Stabil Suspansiyon) ================= -->
+    <xacro:macro name="rover_leg" params="prefix reflect_y">
+        <link name="${prefix}_legmil">
+            <visual>
+                <geometry><cylinder radius="0.035" length="0.10"/></geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+                <material name="grey" />
+            </visual>
+            <inertial>
+                <mass value="1.0"/>
+                <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_legmil"><material>Gazebo/Grey</material></gazebo>
+
+        <link name="${prefix}_prfleg">
+            <visual>
+                <geometry><box size="0.08 0.12 0.14" /></geometry>
+                <material name="grey" />
+            </visual>
+            <inertial>
+                <mass value="1.0"/>
+                <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_prfleg"><material>Gazebo/Grey</material></gazebo>
+
+        <link name="${prefix}_bacak">
+            <visual>
+                <geometry><box size="0.06 0.88 0.06"/></geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="grey" />
+            </visual>
+            <collision>
+                <geometry><box size="0.06 0.80 0.06"/></geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+             <inertial>
+                <mass value="3.0"/>
+                <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+            </inertial>
+        </link>
+        <gazebo reference="${prefix}_bacak"><material>Gazebo/Grey</material></gazebo>
+
+        <!-- Bacak eklemi - Yuksek damping (25.0) ile salinim ve titreme kesildi -->
+        <joint name="base_to_${prefix}_legmil" type="revolute">
+            <parent link="base_link"/>
+            <child link="${prefix}_legmil"/>
+            <origin xyz="${0.39 * reflect_y} 0 0.53" rpy="0 0 0"/>
+            <axis xyz="1 0 0"/> 
+            <limit lower="-0.20" upper="0.20" effort="1000" velocity="0.5"/>
+            <dynamics damping="25.0" friction="2.0"/>
+        </joint>
+
+        <gazebo reference="base_to_${prefix}_legmil">
+            <springStiffness>400.0</springStiffness>
+            <springReference>0.0</springReference>
+            <implicitSpringDamper>true</implicitSpringDamper>
+        </gazebo>
+
+        <joint name="${prefix}_legmil_to_prf" type="fixed">
+            <parent link="${prefix}_legmil"/>
+            <child link="${prefix}_prfleg"/>
+            <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${prefix}_prf_to_bacak" type="fixed">
+            <parent link="${prefix}_prfleg"/>
+            <child link="${prefix}_bacak"/>
+            <origin xyz="${0.03 * reflect_y} 0 -0.03" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:rover_leg prefix="sag" reflect_y="1" />
+    <xacro:wheel_assembly prefix="sag" suffix="on" parent_link="sag_bacak" reflect_x="1" reflect_y="1" />
+    <xacro:wheel_assembly prefix="sag" suffix="arka" parent_link="sag_bacak" reflect_x="-1" reflect_y="1" />
+
+    <xacro:rover_leg prefix="sol" reflect_y="-1" />
+    <xacro:wheel_assembly prefix="sol" suffix="on" parent_link="sol_bacak" reflect_x="1" reflect_y="-1" />
+    <xacro:wheel_assembly prefix="sol" suffix="arka" parent_link="sol_bacak" reflect_x="-1" reflect_y="-1" />
+
+    <!-- ZED2 KAMERA -->
+    <link name="zed2_camera_center">
+        <visual>
+            <geometry><box size="0.033 0.175 0.03" /></geometry> 
+            <material name="black"/>
+        </visual>
+        <inertial>
+            <mass value="0.16"/>
+            <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+        </inertial>
+    </link>
+    <gazebo reference="zed2_camera_center"><material>Gazebo/Black</material></gazebo>
+
+    <joint name="base_to_zed2" type="fixed">
+        <parent link="base_link"/>
+        <child link="zed2_camera_center"/>
+        <origin xyz="0 0.49 0.49" rpy="0 0 ${pi/2}"/> 
+    </joint>
+
+    <link name="zed2_camera_optical_frame"/>
+    <joint name="zed2_optical_joint" type="fixed">
+        <parent link="zed2_camera_center"/>
+        <child link="zed2_camera_optical_frame"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <gazebo reference="zed2_camera_center">
+        <sensor type="depth" name="zed2_sensor">
+            <always_on>true</always_on>
+            <update_rate>10.0</update_rate>
+            <camera name="zed2">
+                <horizontal_fov>1.91986</horizontal_fov>
+                <image><width>640</width><height>360</height><format>R8G8B8</format></image>
+                <clip><near>0.3</near><far>20.0</far></clip>
+                <noise><type>gaussian</type><mean>0.0</mean><stddev>0.007</stddev></noise>
+            </camera>
+            <plugin name="zed2_camera_controller" filename="libgazebo_ros_camera.so">
+                <ros>
+                    <namespace>/zed2</namespace>
+                    <remapping>image_raw:=image_raw</remapping>
+                    <remapping>depth/image_raw:=depth/image_raw</remapping>
+                    <remapping>camera_info:=camera_info</remapping>
+                    <remapping>depth/camera_info:=depth/camera_info</remapping>
+                    <remapping>points:=zed2_sensor/points</remapping>
+                </ros>
+                <frame_name>zed2_camera_optical_frame</frame_name>
+                <hack_baseline>0.12</hack_baseline>
+                <min_depth>0.3</min_depth>
+                <max_depth>20.0</max_depth>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+            <ros><remapping>odom:=odom</remapping></ros>
+            <body_name>base_footprint</body_name> 
+            <frame_name>odom</frame_name> 
+            <update_rate>30.0</update_rate>
+            <xyz_offset>0 0 0</xyz_offset>
+            <rpy_offset>0 0 0</rpy_offset>
+            <gaussian_noise>0.0</gaussian_noise>
+            <publish_tf>false</publish_tf>
+        </plugin>
+    </gazebo>
+
+    <!-- ================= ROS2 CONTROL (Tekerlekler + 5 Robot Kol Eklemi) ================= -->
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+
+        <!-- Suspansiyon Eklemleri -->
+        <joint name="base_to_sag_legmil">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="base_to_sol_legmil">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <!-- Tekerlek Surus Eklemleri -->
+        <joint name="sol_on_drive_to_wheel">
+            <command_interface name="velocity"/>
+            <state_interface name="velocity"/>
+            <state_interface name="position"/>
+        </joint>
+        <joint name="sag_on_drive_to_wheel">
+            <command_interface name="velocity"/>
+            <state_interface name="velocity"/>
+            <state_interface name="position"/>
+        </joint>
+        <joint name="sol_arka_drive_to_wheel">
+            <command_interface name="velocity"/>
+            <state_interface name="velocity"/>
+            <state_interface name="position"/>
+        </joint>
+        <joint name="sag_arka_drive_to_wheel">
+            <command_interface name="velocity"/>
+            <state_interface name="velocity"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <!-- ROBOTIK KOL - 5 ADET HAREKETLI EKLEM ARAYUZU -->
+        <joint name="arm_base_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="arm_shoulder_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="arm_elbow_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="arm_wrist_pitch_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="arm_wrist_roll_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+    <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+            <parameters>$(find robot_2_description)/config/control_arm.yaml</parameters> 
+        </plugin>
+    </gazebo>
+
+</robot>
