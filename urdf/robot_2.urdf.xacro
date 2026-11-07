@@ -367,7 +367,7 @@
             <xyz_offset>0 0 0</xyz_offset>
             <rpy_offset>0 0 0</rpy_offset>
             <gaussian_noise>0.0</gaussian_noise>
-            <publish_tf>true</publish_tf>
+            <publish_tf>false</publish_tf>
         </plugin>
     </gazebo>
 
