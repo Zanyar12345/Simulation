@@ -20,6 +20,8 @@ install(
     robot_2_description/measure_walls_from_map.py
     robot_2_description/measure_ceiling.py
     robot_2_description/wasd.py
+    robot_2_description/input_processor2.py
+    robot_2_description/debug_pc.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

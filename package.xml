@@ -27,6 +27,19 @@
   <exec_depend>rcl_interfaces</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
 
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>effort_controllers</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+
+
+  <exec_depend>sensor_msgs_py</exec_depend>
+  <exec_depend>nav2_simple_commander</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-pynput</exec_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
