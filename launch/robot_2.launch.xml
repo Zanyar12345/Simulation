@@ -2,7 +2,7 @@
 
   <let name="pkg_simulation" value="$(find-pkg-share robot_2_description)"/> 
   
-  <let name="urdf_path" value="$(var pkg_simulation)/urdf/robot_2.urdf.xacro"/>
+  <let name="urdf_path" value="$(var pkg_simulation)/urdf/robot_3.urdf.xacro"/>
   <let name="world_path" value="$(var pkg_simulation)/worlds/moon.world"/>
   <!-- $(var pkg_simulation)/worlds/moon.world -->
   <!-- <let name="model_path" value="$(var pkg_simulation)/models"/> -->

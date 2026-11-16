@@ -102,7 +102,7 @@
     <xacro:colored_part name="under_cyan_box" parent="base_link" xyz="0 0.10 0.43" rpy="0 0 0" geom_type="box" size="0.24 0.24 0.04" rviz_mat="cyan_blue" gz_mat="Gazebo/Turquoise"/>
 
 
-    <!-- ================= 5 EKSENLI HAREKETLI ROBOTIK KOL ================= -->
+    <!-- ================= 5 EKSENLI HAREKETLI ROBOTIK KOL + GRIPPER ================= -->
     <!-- EKLEM 1 - Taban Donusu (Waist Yaw - Z Ekseni) -->
     <joint name="arm_base_joint" type="revolute">
         <parent link="base_link"/>
@@ -261,30 +261,89 @@
         <implicitSpringDamper>true</implicitSpringDamper>
     </gazebo>
 
+    <!-- TUTUCU TABANI (End Effector Base) -->
     <link name="arm_end_effector_link">
         <visual>
             <geometry><box size="0.08 0.08 0.06"/></geometry>
             <origin xyz="0 0 0.03" rpy="0 0 0"/>
             <material name="black"/>
         </visual>
-        <visual>
-            <geometry><box size="0.015 0.03 0.06"/></geometry>
-            <origin xyz="0.03 0 0.08" rpy="0 0 0"/>
-            <material name="grey"/>
-        </visual>
-        <visual>
-            <geometry><box size="0.015 0.03 0.06"/></geometry>
-            <origin xyz="-0.03 0 0.08" rpy="0 0 0"/>
-            <material name="grey"/>
-        </visual>
         <inertial>
             <mass value="0.5"/>
-            <origin xyz="0 0 0.04" rpy="0 0 0"/>
+            <origin xyz="0 0 0.03" rpy="0 0 0"/>
             <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
         </inertial>
     </link>
     <gazebo reference="arm_end_effector_link">
         <material>Gazebo/Black</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 6 - Sol Kiskac Parmagi (Prismatic) -->
+    <joint name="arm_left_finger_joint" type="prismatic">
+        <parent link="arm_end_effector_link"/>
+        <child link="arm_left_finger_link"/>
+        <origin xyz="0.01 0 0.08" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="0.0" upper="0.035" effort="20.0" velocity="0.1"/>
+        <dynamics damping="1.0" friction="0.2"/>
+    </joint>
+    <gazebo reference="arm_left_finger_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_left_finger_link">
+        <visual>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </collision>
+        <inertial>
+            <mass value="0.05"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_left_finger_link">
+        <material>Gazebo/Grey</material>
+        <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- EKLEM 7 - Sag Kiskac Parmagi (Prismatic) -->
+    <joint name="arm_right_finger_joint" type="prismatic">
+        <parent link="arm_end_effector_link"/>
+        <child link="arm_right_finger_link"/>
+        <origin xyz="-0.01 0 0.08" rpy="0 0 0"/>
+        <axis xyz="-1 0 0"/>
+        <limit lower="0.0" upper="0.035" effort="20.0" velocity="0.1"/>
+        <dynamics damping="1.0" friction="0.2"/>
+    </joint>
+    <gazebo reference="arm_right_finger_joint">
+        <implicitSpringDamper>true</implicitSpringDamper>
+    </gazebo>
+
+    <link name="arm_right_finger_link">
+        <visual>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="grey"/>
+        </visual>
+        <collision>
+            <geometry><box size="0.015 0.03 0.06"/></geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </collision>
+        <inertial>
+            <mass value="0.05"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+    <gazebo reference="arm_right_finger_link">
+        <material>Gazebo/Grey</material>
         <selfCollide>false</selfCollide>
     </gazebo>
 
@@ -608,7 +667,7 @@
         </plugin>
     </gazebo>
 
-    <!-- ================= ROS2 CONTROL (Tekerlekler + 5 Robot Kol Eklemi) ================= -->
+    <!-- ================= ROS2 CONTROL (Tekerlekler + 5 Kol Eklemi + 2 Parmak Eklemi) ================= -->
     <ros2_control name="GazeboSystem" type="system">
         <hardware>
             <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -670,6 +729,18 @@
             <state_interface name="velocity"/>
         </joint>
         <joint name="arm_wrist_roll_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <!-- KISKAC (GRIPPER) - 2 ADET PRISMATIC PARMAK ARAYUZU -->
+        <joint name="arm_left_finger_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="arm_right_finger_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
